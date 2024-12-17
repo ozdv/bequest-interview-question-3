@@ -25,7 +25,6 @@ export default function App() {
 
   const handleRevertToRecord = async (targetRecordId: string) => {
     try {
-      console.log("handleRevertToRecord", targetRecordId);
       const revertedRecords = await recordService.revertToRecord(
         targetRecordId
       );

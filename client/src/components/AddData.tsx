@@ -11,8 +11,7 @@ export function AddData({ loadRecords }: { loadRecords: () => Promise<void> }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handleSubmit");
-    console.log(newData);
+
     if (!newData.trim()) return;
 
     try {

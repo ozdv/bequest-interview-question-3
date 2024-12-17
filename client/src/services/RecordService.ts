@@ -29,12 +29,36 @@ export class RecordService {
   }
 
   async verifyChain(records: RecordT[]): Promise<boolean> {
-    for (let i = 0; i < records.length; i++) {
-      const previousRecord = i > 0 ? records[i - 1] : undefined;
-      if (!(await CryptoUtils.verifyRecord(records[i], previousRecord))) {
+    // Sort records by timestamp to ensure proper order
+    const sortedRecords = [...records].sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+
+    for (let i = 0; i < sortedRecords.length; i++) {
+      const previousRecord = i > 0 ? sortedRecords[i - 1] : undefined;
+      if (!(await CryptoUtils.verifyRecord(sortedRecords[i], previousRecord))) {
         return false;
       }
     }
     return true;
+  }
+
+  async revertToRecord(targetRecordId: string): Promise<RecordT[]> {
+    const response = await fetch(
+      `${API_URL}/records/revert/${targetRecordId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to revert chain");
+    }
+
+    return response.json();
   }
 }

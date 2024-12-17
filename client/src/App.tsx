@@ -30,7 +30,10 @@ export default function App() {
       <Header />
       <div className="flex flex-col p-4 gap-6">
         <div className="flex flex-col sm:flex-row gap-4 w-full">
-          <DataStatus isChainValid={isChainValid} />
+          <DataStatus
+            isChainValid={isChainValid}
+            currentData={records[records.length - 1]}
+          />
           <AddData loadRecords={loadRecords} />
         </div>
         <DataTable records={records} />

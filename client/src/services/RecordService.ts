@@ -61,4 +61,26 @@ export class RecordService {
 
     return response.json();
   }
+
+  async tamperWithRecord(recordId: string, newData: any): Promise<RecordT> {
+    const response = await fetch(`${API_URL}/records/${recordId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          ...newData,
+          tampered: true,
+          modifiedAt: new Date().toISOString(),
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to tamper with record");
+    }
+
+    return response.json();
+  }
 }

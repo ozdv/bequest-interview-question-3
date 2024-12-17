@@ -12,9 +12,11 @@ import { Button } from "./ui/button";
 export function DataTable({
   records,
   handleRevertToRecord,
+  handleSimulateTampering,
 }: {
   records: RecordT[];
   handleRevertToRecord: (targetRecordId: string) => Promise<void>;
+  handleSimulateTampering: (targetRecordId: string) => Promise<void>;
 }) {
   return (
     <div className="w-full rounded-lg overflow-hidden shadow-sm border-border border">
@@ -60,12 +62,12 @@ export function DataTable({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => handleRevertToRecord(record.id)}
-                      disabled={record.id !== records[0].id}
-                    >
+                  <TableCell className="flex flex-row gap-2">
+                    <Button onClick={() => handleRevertToRecord(record.id)}>
                       Revert
+                    </Button>
+                    <Button onClick={() => handleSimulateTampering(record.id)}>
+                      Tamper with
                     </Button>
                   </TableCell>
                 </TableRow>

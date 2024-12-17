@@ -52,6 +52,24 @@ app.post("/records/revert/:id", (req, res) => {
   res.json(records);
 });
 
+// This endpoint will simulate tampering by modifying data without updating the hash
+app.patch("/records/:id", (req, res) => {
+  const { id } = req.params;
+  const { data } = req.body;
+
+  const recordIndex = records.findIndex((record) => record.id === id);
+  if (recordIndex === -1) {
+    return res.status(404).json({ error: "Record not found" });
+  }
+
+  records[recordIndex] = {
+    ...records[recordIndex],
+    data: data,
+  };
+
+  res.json(records[recordIndex]);
+});
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {

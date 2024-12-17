@@ -24,11 +24,29 @@ export default function App() {
   };
 
   const handleRevertToRecord = async (targetRecordId: string) => {
-    console.log("handleRevertToRecord", targetRecordId);
-    const revertedRecords = await recordService.revertToRecord(targetRecordId);
-    setRecords(revertedRecords);
-    const isValid = await recordService.verifyChain(revertedRecords);
-    setIsChainValid(isValid);
+    try {
+      console.log("handleRevertToRecord", targetRecordId);
+      const revertedRecords = await recordService.revertToRecord(
+        targetRecordId
+      );
+      setRecords(revertedRecords);
+      const isValid = await recordService.verifyChain(revertedRecords);
+      setIsChainValid(isValid);
+    } catch (error) {
+      console.error("Failed to tamper with record:", error);
+    }
+  };
+
+  const handleSimulateTampering = async (recordId: string) => {
+    try {
+      await recordService.tamperWithRecord(recordId, {
+        message: "This data has been tampered with!",
+        originalTimestamp: new Date().toISOString(),
+      });
+      await loadRecords();
+    } catch (error) {
+      console.error("Failed to tamper with record:", error);
+    }
   };
 
   return (
@@ -45,6 +63,7 @@ export default function App() {
         <DataTable
           records={records}
           handleRevertToRecord={handleRevertToRecord}
+          handleSimulateTampering={handleSimulateTampering}
         />
       </div>
     </div>

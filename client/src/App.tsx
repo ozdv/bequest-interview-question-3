@@ -8,6 +8,7 @@ export default function App() {
   const [records, setRecords] = React.useState<RecordT[]>([]);
   const [newData, setNewData] = React.useState("");
   const [isChainValid, setIsChainValid] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     loadRecords();
@@ -25,11 +26,14 @@ export default function App() {
     if (!newData.trim()) return;
 
     try {
+      setIsLoading(true);
       await recordService.createRecord({ content: newData });
       setNewData("");
       await loadRecords();
+      setIsLoading(false);
     } catch (error) {
       console.error("Error creating record:", error);
+      setIsLoading(false);
     }
   };
 

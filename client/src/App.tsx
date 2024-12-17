@@ -1,70 +1,74 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
+import { RecordService } from "./services/RecordService";
+import { RecordT } from "./types/Record";
 
-const API_URL = "http://localhost:8080";
+const recordService = new RecordService();
 
-function App() {
-  const [data, setData] = useState<string>();
+export default function App() {
+  const [records, setRecords] = React.useState<RecordT[]>([]);
+  const [newData, setNewData] = React.useState("");
+  const [isChainValid, setIsChainValid] = React.useState(true);
 
-  useEffect(() => {
-    getData();
+  React.useEffect(() => {
+    loadRecords();
   }, []);
 
-  const getData = async () => {
-    const response = await fetch(API_URL);
-    const { data } = await response.json();
-    setData(data);
+  const loadRecords = async () => {
+    const fetchedRecords = await recordService.getRecords();
+    setRecords(fetchedRecords);
+    const isValid = await recordService.verifyChain(fetchedRecords);
+    setIsChainValid(isValid);
   };
 
-  const updateData = async () => {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ data }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newData.trim()) return;
 
-    await getData();
-  };
-
-  const verifyData = async () => {
-    throw new Error("Not implemented");
+    try {
+      await recordService.createRecord({ content: newData });
+      setNewData("");
+      await loadRecords();
+    } catch (error) {
+      console.error("Error creating record:", error);
+    }
   };
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        position: "absolute",
-        padding: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        gap: "20px",
-        fontSize: "30px",
-      }}
-    >
-      <div>Saved Data</div>
-      <input
-        style={{ fontSize: "30px" }}
-        type="text"
-        value={data}
-        onChange={(e) => setData(e.target.value)}
-      />
+    <div style={{ padding: "20px" }}>
+      <h1>Tamper-Proof Records</h1>
 
-      <div style={{ display: "flex", gap: "10px" }}>
-        <button style={{ fontSize: "20px" }} onClick={updateData}>
-          Update Data
-        </button>
-        <button style={{ fontSize: "20px" }} onClick={verifyData}>
-          Verify Data
-        </button>
+      <div style={{ marginBottom: "20px" }}>
+        <h3>Chain Status: {isChainValid ? "✅ Valid" : "❌ Tampered"}</h3>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={newData}
+          onChange={(e) => setNewData(e.target.value)}
+          placeholder="Enter data"
+        />
+        <button type="submit">Add Record</button>
+      </form>
+
+      <div style={{ marginTop: "20px" }}>
+        {records.map((record) => (
+          <div
+            key={record.id}
+            style={{
+              border: "1px solid #ccc",
+              margin: "10px 0",
+              padding: "10px",
+            }}
+          >
+            <div>ID: {record.id}</div>
+            <div>Data: {JSON.stringify(record.data)}</div>
+            <div>Timestamp: {new Date(record.timestamp).toLocaleString()}</div>
+            <div>Previous Hash: {record.previousHash}</div>
+            <div>Hash: {record.hash}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
-
-export default App;

@@ -45,6 +45,13 @@ app.get("/records", (req, res) => {
   res.json(records);
 });
 
+// This is the endpoint that will be used to revert to a specific record
+app.post("/records/revert/:id", (req, res) => {
+  const { id } = req.params;
+  records = records.filter((record) => record.id !== id);
+  res.json(records);
+});
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {

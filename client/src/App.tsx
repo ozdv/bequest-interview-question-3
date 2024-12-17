@@ -10,7 +10,6 @@ const recordService = new RecordService();
 
 export default function App() {
   const [records, setRecords] = React.useState<RecordT[]>([]);
-
   const [isChainValid, setIsChainValid] = React.useState(true);
 
   React.useEffect(() => {
@@ -21,7 +20,14 @@ export default function App() {
     const fetchedRecords = await recordService.getRecords();
     setRecords(fetchedRecords);
     const isValid = await recordService.verifyChain(fetchedRecords);
-    console.log("isValid", isValid);
+    setIsChainValid(isValid);
+  };
+
+  const handleRevertToRecord = async (targetRecordId: string) => {
+    console.log("handleRevertToRecord", targetRecordId);
+    const revertedRecords = await recordService.revertToRecord(targetRecordId);
+    setRecords(revertedRecords);
+    const isValid = await recordService.verifyChain(revertedRecords);
     setIsChainValid(isValid);
   };
 
@@ -32,11 +38,14 @@ export default function App() {
         <div className="flex flex-col sm:flex-row gap-4 w-full">
           <DataStatus
             isChainValid={isChainValid}
-            currentData={records[records.length - 1]}
+            currentData={records.sort((a, b) => b.timestamp - a.timestamp)[0]}
           />
           <AddData loadRecords={loadRecords} />
         </div>
-        <DataTable records={records} />
+        <DataTable
+          records={records}
+          handleRevertToRecord={handleRevertToRecord}
+        />
       </div>
     </div>
   );

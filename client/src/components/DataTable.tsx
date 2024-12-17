@@ -7,8 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import { Button } from "./ui/button";
 
-export function DataTable({ records }: { records: RecordT[] }) {
+export function DataTable({
+  records,
+  handleRevertToRecord,
+}: {
+  records: RecordT[];
+  handleRevertToRecord: (targetRecordId: string) => Promise<void>;
+}) {
   return (
     <div className="w-full rounded-lg overflow-hidden shadow-sm border-border border">
       <Table>
@@ -18,6 +25,7 @@ export function DataTable({ records }: { records: RecordT[] }) {
             <TableHead>Data</TableHead>
             <TableHead>Timestamp</TableHead>
             <TableHead>Hash</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -28,8 +36,8 @@ export function DataTable({ records }: { records: RecordT[] }) {
               .map((record) => (
                 <TableRow key={record.id}>
                   <TableCell className="text-xs">{record.id}</TableCell>
-                  <TableCell className="text-xs">
-                    {JSON.stringify(record.data)}
+                  <TableCell className="text-base text-primary">
+                    {JSON.stringify(record.data.content)}
                   </TableCell>
                   <TableCell className="text-xs">
                     {new Date(record.timestamp).toLocaleString()}
@@ -52,11 +60,19 @@ export function DataTable({ records }: { records: RecordT[] }) {
                       </div>
                     </div>
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleRevertToRecord(record.id)}
+                      disabled={record.id !== records[0].id}
+                    >
+                      Revert
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
+              <TableCell colSpan={99} className="text-center">
                 No records found
               </TableCell>
             </TableRow>

@@ -29,7 +29,7 @@ export class RecordService {
   }
 
   async verifyChain(records: RecordT[]): Promise<boolean> {
-    // Sort records by timestamp to ensure proper order
+    // Sort records by timestamp to ensure proper order (because we're using a hashmap they ought to be in order  and I am reversing the order in the display of them)
     const sortedRecords = [...records].sort(
       (a, b) =>
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()

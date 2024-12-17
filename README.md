@@ -2,6 +2,26 @@
 
 At Bequest, we require that important user data is tamper proof. Otherwise, our system can incorrectly distribute assets if our internal server or database is breached.
 
+## About
+
+I have gone about creating the following functionalities of a hash chain approach to tamper proof data.
+
+- listing all the records (Check out the `getRecords` method in the `RecordService` class)
+- adding a new record (Check out the `createRecord` method in the `RecordService` class)
+- tampering with a record (Check out the `tamperWithRecord` method in the `RecordService` class)
+- reverting to a records previous state (by using the previous hash) (Check out the `revertToRecord` method in the `RecordService` class)
+- broke out the app into UI components and functional components
+
+In addition, I have taken the liberty of adding shadcn styles and tailwind to the project just for fun and to make it look prettier
+
+If I had more time, I would have added the following
+
+- A more secure way to store the data
+- A more secure way to fetch the data (using a private key)
+- A better way to verify the chain (using a merkle tree)
+- A more efficient way to store the data
+- A more efficient way to revert to a records previous state
+
 ## Questions
 
 ### **1. How does the client ensure that their data has not been tampered with?**
